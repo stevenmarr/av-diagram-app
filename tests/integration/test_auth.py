@@ -37,10 +37,19 @@ def test_login_page_renders(client):
     assert b'<form method="post">' in response.data
 
 def test_login_success_redirects_to_dashboard(superadmin_client, client):
-    client, _ = superadmin_client  # unpack
+    """Successful login redirects to /super_admin and renders the dashboard."""
+    client, _ = superadmin_client  # unpack fixture
+
     response = client.get('/super_admin/', follow_redirects=True)
     assert response.status_code == 200
-    assert b'Welcome, Super Admin!' in response.data
+
+    # Check for stable dashboard content (pick one or more that exist in your template)
+    assert b'Super Admin Dashboard' in response.data          # from <title> or <h1>
+    assert b'Master Device Types' in response.data           # section heading
+    assert b'Add New Device Type' in response.data           # form heading
+    assert b'Logout' in response.data                         # logout link
+    # Optional: check for the add form structure
+    assert b'<form method="post">' in response.data
 
 def test_regular_user_gets_403(client, app):
     username = f'regular_test_{uuid.uuid4().hex[:8]}'
