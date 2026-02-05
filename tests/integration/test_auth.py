@@ -2,6 +2,7 @@
 import pytest
 from app import create_app, db
 from app.models.user import User
+from app.decorators.role import requires_super_admin
 
 @pytest.fixture
 def client(app):
@@ -67,3 +68,25 @@ def test_logout_redirects_to_login(superadmin_client):
     assert response.status_code == 200
     assert b'Logged out successfully' in response.data
     assert b'Login' in response.data
+
+def test_unauthenticated_redirects_to_login(client):
+    """Unauthenticated user redirected to login on dashboard."""
+    response = client.get('/super_admin/', follow_redirects=True)
+    assert response.status_code == 200
+    assert b'Login' in response.data  # or check redirect location if not following
+
+def test_regular_user_gets_403(client, app):
+    """Regular user gets 403 on super admin dashboard."""
+    with app.app_context():
+        regular = User(username='regular_test', role='user')
+        regular.set_password('test123')
+        db.session.add(regular)
+        db.session.commit()
+
+    client.post('/login', data={
+        'username': 'regular_test',
+        'password': 'test123'
+    }, follow_redirects=True)
+
+    response = client.get('/super_admin/')
+    assert response.status_code == 403
