@@ -1,13 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin Dashboard</title>
-</head>
-<body>
-    <h1>Welcome, Super Admin!</h1>
-    <p>This is the protected super admin area. Master data management coming soon.</p>
-    <p><a href="{{ url_for('auth.logout') }}">Logout</a></p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Super Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1>Welcome, Super Admin!</h1>
+<p>Master Device Types</p>
+<ul>
+    {% for dt in device_types %}
+        <li>{{ dt.name }} (Color: {{ dt.color }})</li>
+    {% endfor %}
+</ul>
+
+<h2>Add New Device Type</h2>
+<form method="post">
+    <label>Name:</label>
+    <input type="text" name="name" required><br>
+    <label>Color (hex):</label>
+    <input type="text" name="color" value="#3366FF"><br>
+    <input type="submit" value="Add">
+</form>
+
+<p><a href="{{ url_for('auth.logout') }}">Logout</a></p>
+{% endblock %}
