@@ -1,5 +1,5 @@
-import { ReactFlow, Controls, Background } from '@xyflow/react'
-import '@xyflow/react/dist/style.css'
+import { ReactFlow, Controls, Background } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
         <Background variant="dots" gap={12} size={1} />
       </ReactFlow>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -17,5 +17,6 @@ def create_app():
     # Blueprints (we'll add them in later sprints)
     # from .controllers.auth import auth_bp
     # app.register_blueprint(auth_bp)
-
+    if __name__ == '__main__':
+        app.run(host='0.0.0.0', port=5000, debug=True)
     return app
