@@ -7,35 +7,45 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
         h1 { color: #333; }
-        .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
+        .message { padding: 12px; margin: 15px 0; border-radius: 6px; font-weight: bold; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .list { margin: 20px 0; list-style: none; padding: 0; }
-        .list li { padding: 10px; background: white; border-radius: 4px; margin-bottom: 8px; }
-        form { margin-top: 20px; padding: 15px; background: white; border-radius: 4px; }
-        label { display: block; margin: 10px 0 5px; font-weight: bold; }
-        input[type="text"] { padding: 8px; width: 250px; border: 1px solid #ddd; border-radius: 4px; }
-        input[type="submit"] { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        .list li { padding: 12px; background: white; border-radius: 6px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .color-box { display: inline-block; width: 24px; height: 24px; border: 1px solid #ccc; vertical-align: middle; margin-right: 10px; border-radius: 4px; }
+        form { margin-top: 25px; padding: 20px; background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        label { display: block; margin: 12px 0 6px; font-weight: bold; }
+        input[type="text"] { padding: 10px; width: 280px; border: 1px solid #ddd; border-radius: 4px; }
+        input[type="submit"] { padding: 10px 24px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 12px; }
         input[type="submit"]:hover { background: #0056b3; }
-        .logout { margin-top: 30px; }
+        .delete-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .delete-btn:hover { background: #c82333; }
+        .logout { margin-top: 40px; font-size: 1.1em; }
     </style>
 </head>
 <body>
-    <h1>Welcome, Super Admin!</h1>
+    <h1>Super Admin Dashboard</h1>
 
     {% if message %}
-        <div class="message {% if 'success' in message %}success{% else %}error{% endif %}">
+        <div class="message {{ 'success' if message_type == 'success' else 'error' }}">
             {{ message }}
         </div>
     {% endif %}
 
-    <h2>Master Device Types</h2>
+    <h2>Master Device Types ({{ device_types|length }})</h2>
     {% if device_types %}
         <ul class="list">
             {% for dt in device_types %}
                 <li>
-                    <span style="color: {{ dt.color }}; font-weight: bold; font-size: 20px;">■</span>
-                    {{ dt.name }}
+                    <div>
+                        <span class="color-box" style="background-color: {{ dt.color }};"></span>
+                        <strong>{{ dt.name }}</strong>
+                    </div>
+                    <form method="post" style="margin: 0;">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="device_id" value="{{ dt.id }}">
+                        <button type="submit" class="delete-btn" onclick="return confirm('Delete {{ dt.name }}? This cannot be undone.')">Delete</button>
+                    </form>
                 </li>
             {% endfor %}
         </ul>
@@ -45,6 +55,7 @@
 
     <h2>Add New Device Type</h2>
     <form method="post">
+        <input type="hidden" name="action" value="add">
         <label for="name">Name (required, unique):</label>
         <input type="text" id="name" name="name" required>
 
