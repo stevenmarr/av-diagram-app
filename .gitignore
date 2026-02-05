@@ -40,3 +40,8 @@ Thumbs.db
 
 # Database files (only for local dev)
 data/
+
+# Coverage reports
+.coverage
+coverage.xml
+htmlcov/
