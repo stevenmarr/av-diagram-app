@@ -6,9 +6,9 @@ from functools import wraps
 def requires_super_admin(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        print("requires_super_admin decorator called")
-        print("current_user authenticated:", current_user.is_authenticated)
-        print("current_user.role:", current_user.role if current_user.is_authenticated else "None")
+        #print("requires_super_admin decorator called")
+        #print("current_user authenticated:", current_user.is_authenticated)
+        #print("current_user.role:", current_user.role if current_user.is_authenticated else "None")
         if not current_user.is_authenticated or current_user.role != 'super_admin':
             print("Access denied - aborting 403")
             abort(403)
