@@ -138,3 +138,45 @@ def test_add_device_type_form(superadmin_client, client):
         dt = DeviceType.query.filter_by(name=unique_name).first()
         assert dt is not None
         assert dt.color == color
+
+def test_delete_device_type(superadmin_client, client):
+    """Super admin can delete a device type and see it removed from list."""
+    client, _ = superadmin_client
+
+    # Add a unique test device type
+    name = f"Delete Test {uuid.uuid4().hex[:8]}"
+    color = "#123456"
+
+    add_response = client.post('/super_admin/', data={
+        'action': 'add',
+        'name': name,
+        'color': color
+    }, follow_redirects=True)
+
+    assert add_response.status_code == 200
+    assert name.encode() in add_response.data  # added successfully
+
+    # Get the ID
+    with client.application.app_context():
+        dt = DeviceType.query.filter_by(name=name).first()
+        assert dt is not None
+        device_id = dt.id
+
+    # Perform delete
+    delete_response = client.post('/super_admin/', data={
+        'action': 'delete',
+        'device_id': device_id
+    }, follow_redirects=True)
+
+    assert delete_response.status_code == 200
+
+    # Check for success message (match your exact message format)
+    expected_msg = f"Device type '{name}' deleted.".encode()
+    assert expected_msg in delete_response.data
+
+    # Verify removed from list (name should no longer appear)
+    assert name.encode() not in delete_response.data
+
+    # Verify gone from DB
+    with client.application.app_context():
+        assert DeviceType.query.filter_by(name=name).first() is None
