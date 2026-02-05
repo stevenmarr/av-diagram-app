@@ -2,11 +2,13 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from app import db
 from app.models.master import DeviceType
+from app.decorators.role import requires_super_admin
 
 super_admin_bp = Blueprint('super_admin', __name__, url_prefix='/super_admin')
 
 @super_admin_bp.route('/', methods=['GET', 'POST'])
 @login_required
+@requires_super_admin
 def dashboard():
     if request.method == 'POST':
         name = request.form.get('name')
