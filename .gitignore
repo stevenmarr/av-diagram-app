@@ -45,3 +45,6 @@ data/
 .coverage
 coverage.xml
 htmlcov/
+
+# Sandbox for running python script
+ python_generic_script.py
