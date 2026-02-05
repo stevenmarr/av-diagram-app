@@ -18,7 +18,8 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
-
+    from app.controllers.auth import auth_bp
+    app.register_blueprint(auth_bp)
     # Temporary test route (returns 200 instead of 404)
     @app.route('/')
     def hello():
