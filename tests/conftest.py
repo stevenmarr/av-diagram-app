@@ -2,21 +2,22 @@
 import pytest
 from app import create_app, db
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def app():
-    """Create and configure a new app instance for each test."""
     app = create_app()
     app.config.update({
         "TESTING": True,
         "SQLALCHEMY_DATABASE_URI": "postgresql://postgres:your_secure_password_here@localhost:5432/test_db",
-        "WTF_CSRF_ENABLED": False,  # disable CSRF for testing
+        "SQLALCHEMY_TRACK_MODIFICATIONS": False,
+        "WTF_CSRF_ENABLED": False,
     })
 
-    # Create tables
     with app.app_context():
         db.create_all()
         yield app
-        db.drop_all()
+        # Rollback instead of drop (prevents locks/hangs)
+        db.session.rollback()
+        db.session.remove()
 
 @pytest.fixture
 def client(app):
