@@ -20,17 +20,17 @@ function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  const [nodeMenu, setNodeMenu] = useState(null);   // right-click on node
-  const [canvasMenu, setCanvasMenu] = useState(null); // right-click on empty space
+  const [nodeMenu, setNodeMenu] = useState(null);
+  const [canvasMenu, setCanvasMenu] = useState(null);
 
-  const closeMenus = () => {
+  const closeMenus = useCallback(() => {
     setNodeMenu(null);
     setCanvasMenu(null);
-  };
+  }, []);
 
-  const onConnect = (params) => setEdges((eds) => addEdge(params, eds));
+  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
-  const isValidConnection = (connection) => {
+  const isValidConnection = useCallback((connection) => {
     const { source, sourceHandle, target, targetHandle } = connection;
     if (source === target) return false;
 
@@ -49,26 +49,21 @@ function App() {
     const toTarget = edges.filter(e => e.target === target && e.targetHandle === targetHandle);
 
     return fromSource.length === 0 && toTarget.length === 0;
-  };
+  }, [nodes, edges]);
 
-  // Right-click on NODE
-  const onNodeContextMenu = (event, node) => {
+  const onNodeContextMenu = useCallback((event, node) => {
     event.preventDefault();
-    console.log('Node right-click →', node.id);
     setNodeMenu({ x: event.clientX, y: event.clientY, nodeId: node.id, nodeData: node.data });
     setCanvasMenu(null);
-  };
+  }, []);
 
-  // Right-click on EMPTY CANVAS
-  const onPaneContextMenu = (event) => {
+  const onPaneContextMenu = useCallback((event) => {
     event.preventDefault();
-    console.log('Canvas right-click');
     setCanvasMenu({ x: event.clientX, y: event.clientY });
     setNodeMenu(null);
-  };
+  }, []);
 
-  // Node menu actions
-  const handleNodeAction = (action) => {
+  const handleNodeAction = useCallback((action) => {
     if (!nodeMenu) return;
     const { nodeId, nodeData } = nodeMenu;
 
@@ -86,12 +81,20 @@ function App() {
       alert(`Node Info:\nID: ${nodeId}\nLabel: ${nodeData.label || '—'}\nPins: ${nodeData.pins?.length || 0}`);
     }
     closeMenus();
-  };
+  }, [nodeMenu, setNodes, setEdges, closeMenus]);
 
-  // Canvas menu actions (blank for now)
-  const handleCanvasAction = (action) => {
-    if (action === 'add-device') alert('Add new device coming soon...');
-    if (action === 'save-graph') alert('Save graph coming soon...');
+  // Canvas menu actions
+  const handleCanvasAction = useCallback((action) => {
+    if (action === 'add-device') {
+      alert('Add new device coming soon...');
+    }
+    if (action === 'add-new-device-type') {
+      // ← This is the new entry
+      window.open('http://192.168.64.3:5000/super_admin/', '_blank');   // ← Change this URL to your actual endpoint
+    }
+    if (action === 'save-graph') {
+      alert('Save graph coming soon...');
+    }
     if (action === 'clear-canvas') {
       if (window.confirm('Clear entire canvas?')) {
         setNodes([]);
@@ -99,14 +102,12 @@ function App() {
       }
     }
     closeMenus();
-  };
+  }, [closeMenus]);
 
-  // Listen for nodes from Python
   useEffect(() => {
     const handleMessage = (event) => {
       if (event.data?.type === 'add-node') {
         const payloads = Array.isArray(event.data.payload) ? event.data.payload : [event.data.payload];
-
         const newNodes = payloads.map(p => ({
           id: p.id || `node-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           type: 'custom',
@@ -121,7 +122,6 @@ function App() {
           },
           draggable: true,
         }));
-
         setNodes(prev => [...prev, ...newNodes]);
       }
     };
@@ -151,7 +151,7 @@ function App() {
         <Background variant="dots" gap={12} size={1} />
       </ReactFlow>
 
-      {/* NODE MENU - bright yellow, impossible to miss */}
+      {/* Node Menu */}
       {nodeMenu && (
         <div
           style={{
@@ -159,25 +159,30 @@ function App() {
             left: `${nodeMenu.x}px`,
             top: `${nodeMenu.y}px`,
             zIndex: 99999,
-            background: '#ffeb3b',
-            border: '4px solid red',
+            background: '#1f2937',
+            border: '1px solid #4b5563',
             borderRadius: '8px',
-            padding: '12px',
-            boxShadow: '0 0 30px rgba(0,0,0,0.6)',
-            minWidth: '200px',
-            color: '#000',
-            fontWeight: 'bold',
+            padding: '6px 0',
+            boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.5)',
+            minWidth: '180px',
+            color: '#e5e7eb',
+            fontSize: '14px',
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <strong>Node Menu</strong><br /><br />
-          <div onClick={() => handleNodeAction('edit-label')} style={{ padding: '8px', cursor: 'pointer' }}>Edit Label</div>
-          <div onClick={() => handleNodeAction('info')} style={{ padding: '8px', cursor: 'pointer' }}>Node Info</div>
-          <div onClick={() => handleNodeAction('delete')} style={{ padding: '8px', cursor: 'pointer', color: 'red' }}>Delete Node</div>
+          <div onClick={() => handleNodeAction('edit-label')} style={{ padding: '10px 16px', cursor: 'pointer' }} className="hover:bg-slate-700">
+            Edit Label
+          </div>
+          <div onClick={() => handleNodeAction('info')} style={{ padding: '10px 16px', cursor: 'pointer' }} className="hover:bg-slate-700">
+            Node Info
+          </div>
+          <div onClick={() => handleNodeAction('delete')} style={{ padding: '10px 16px', cursor: 'pointer', color: '#f87171' }} className="hover:bg-slate-700">
+            Delete Node
+          </div>
         </div>
       )}
 
-      {/* CANVAS MENU - bright green */}
+      {/* Canvas Menu - Now includes "Add New Device Type" */}
       {canvasMenu && (
         <div
           style={{
@@ -185,21 +190,29 @@ function App() {
             left: `${canvasMenu.x}px`,
             top: `${canvasMenu.y}px`,
             zIndex: 99999,
-            background: '#4caf50',
-            border: '4px solid blue',
+            background: '#1f2937',
+            border: '1px solid #4b5563',
             borderRadius: '8px',
-            padding: '12px',
-            boxShadow: '0 0 30px rgba(0,0,0,0.6)',
-            minWidth: '220px',
-            color: '#000',
-            fontWeight: 'bold',
+            padding: '6px 0',
+            boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.5)',
+            minWidth: '200px',
+            color: '#e5e7eb',
+            fontSize: '14px',
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <strong>Canvas Menu</strong><br /><br />
-          <div onClick={() => handleCanvasAction('add-device')} style={{ padding: '8px', cursor: 'pointer' }}>Add New Device…</div>
-          <div onClick={() => handleCanvasAction('save-graph')} style={{ padding: '8px', cursor: 'pointer' }}>Save Graph / Export</div>
-          <div onClick={() => handleCanvasAction('clear-canvas')} style={{ padding: '8px', cursor: 'pointer', color: 'red' }}>Clear Canvas</div>
+          <div onClick={() => handleCanvasAction('add-new-device-type')} style={{ padding: '10px 16px', cursor: 'pointer' }} className="hover:bg-slate-700">
+            Add New Device Type
+          </div>
+          <div onClick={() => handleCanvasAction('add-device')} style={{ padding: '10px 16px', cursor: 'pointer' }} className="hover:bg-slate-700">
+            Add Existing Device…
+          </div>
+          <div onClick={() => handleCanvasAction('save-graph')} style={{ padding: '10px 16px', cursor: 'pointer' }} className="hover:bg-slate-700">
+            Save Graph / Export
+          </div>
+          <div onClick={() => handleCanvasAction('clear-canvas')} style={{ padding: '10px 16px', cursor: 'pointer', color: '#f87171' }} className="hover:bg-slate-700">
+            Clear Canvas
+          </div>
         </div>
       )}
     </div>
