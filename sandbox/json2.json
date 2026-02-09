@@ -1,0 +1,168 @@
+window.postMessage({
+  type: 'add-node',
+  payload: {
+    "id": "constellation-2me-studio-b",
+    "type": "custom",
+    "position": { "x": 580, "y": 120 },
+    "label": "ATEM Constellation 2 M/E – Studio B (Backup)",
+    "manufacturer": "Blackmagic Design",
+    "model": "ATEM Constellation 2 M/E",
+    "color": "#0a1f44",
+    "notes": "Backup unit – identical spec to Studio A",
+    "thumbnail": null,
+    "pins": [
+      {"id": "sdi-in-1", "label": "SDI In 1", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-2", "label": "SDI In 2", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-3", "label": "SDI In 3", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-4", "label": "SDI In 4", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-5", "label": "SDI In 5", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-6", "label": "SDI In 6", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-7", "label": "SDI In 7", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-8", "label": "SDI In 8", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-9", "label": "SDI In 9", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-10", "label": "SDI In 10", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-11", "label": "SDI In 11", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-12", "label": "SDI In 12", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-13", "label": "SDI In 13", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-14", "label": "SDI In 14", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-15", "label": "SDI In 15", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-16", "label": "SDI In 16", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-17", "label": "SDI In 17", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-18", "label": "SDI In 18", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-19", "label": "SDI In 19", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-in-20", "label": "SDI In 20", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-1", "label": "SDI Aux Out 1", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-2", "label": "SDI Aux Out 2", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-3", "label": "SDI Aux Out 3", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-4", "label": "SDI Aux Out 4", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-5", "label": "SDI Aux Out 5", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-6", "label": "SDI Aux Out 6", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-7", "label": "SDI Aux Out 7", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-8", "label": "SDI Aux Out 8", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-9", "label": "SDI Aux Out 9", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-10", "label": "SDI Aux Out 10", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-11", "label": "SDI Aux Out 11", "type": "output", "spec": "12G-SDI"},
+      {"id": "sdi-aux-out-12", "label": "SDI Aux Out 12", "type": "output", "spec": "12G-SDI"},
+      {"id": "ethernet-ctrl-1", "label": "Control Ethernet 1", "type": "control", "spec": "1GBASE-T"},
+      {"id": "ethernet-ctrl-2", "label": "Control Ethernet 2", "type": "control", "spec": "1GBASE-T"},
+      {"id": "ethernet-ctrl-3", "label": "Control Ethernet 3", "type": "control", "spec": "1GBASE-T"},
+      {"id": "ethernet-ctrl-4", "label": "Control Ethernet 4", "type": "control", "spec": "1GBASE-T"},
+      {"id": "ref-in", "label": "Reference Input", "type": "input", "spec": "Tri-Level / Black Burst"}
+    ]
+  }
+}, '*');
+
+window.postMessage({
+  type: 'add-node',
+  payload: {
+    "id": "decimator-md-lx-002",
+    "type": "custom",
+    "position": { "x": 350, "y": 320 },
+    "label": "Decimator MD-LX",
+    "manufacturer": "Decimator Design",
+    "model": "MD-LX",
+    "color": "#1a3c5e",
+    "notes": "12G-SDI ↔ HDMI 2.0 bidirectional converter & scaler. 4K60, LUTs, HDR, audio embed/de-embed, cross-conversion, test patterns, CC/timecode overlay.",
+    "thumbnail": null,
+    "pins": [
+      {"id": "sdi-bnc-1-in-out", "label": "SDI 1 In/Out", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-bnc-1-out", "label": "SDI 1 Out", "type": "output", "spec": "12G-SDI"},
+      {"id": "hdmi-in", "label": "HDMI In", "type": "input", "spec": "HDMI 2.0"},
+      {"id": "hdmi-out", "label": "HDMI Out", "type": "output", "spec": "HDMI 2.0"},
+      {"id": "audio-embed", "label": "Audio Embed", "type": "input", "spec": "AES/Analog"},
+      {"id": "audio-deembed-sdi", "label": "Audio De-embed SDI", "type": "output", "spec": "AES/Analog"},
+      {"id": "audio-deembed-hdmi", "label": "Audio De-embed HDMI", "type": "output", "spec": "HDMI"},
+      {"id": "usb-control", "label": "USB Control/LUT", "type": "control", "spec": "USB 2.0"},
+      {"id": "power-5v", "label": "5V DC Power", "type": "input", "spec": "Power"},
+      {"id": "ref-in", "label": "Ref In", "type": "input", "spec": "Tri-Level/BB"}
+    ]
+  }
+}, '*');
+window.postMessage({
+  type: 'add-node',
+  payload: {
+    "id": "decimator-md-lx-001",
+    "type": "custom",
+    "position": { "x": 350, "y": 320 },
+    "label": "Decimator MD-LX",
+    "manufacturer": "Decimator Design",
+    "model": "MD-LX",
+    "color": "#1a3c5e",
+    "notes": "12G-SDI ↔ HDMI 2.0 bidirectional converter & scaler. 4K60, LUTs, HDR, audio embed/de-embed, cross-conversion, test patterns, CC/timecode overlay.",
+    "thumbnail": null,
+    "pins": [
+      {"id": "sdi-bnc-1-in-out", "label": "SDI 1 In/Out", "type": "input", "spec": "12G-SDI"},
+      {"id": "sdi-bnc-1-out", "label": "SDI 1 Out", "type": "output", "spec": "12G-SDI"},
+      {"id": "hdmi-in", "label": "HDMI In", "type": "input", "spec": "HDMI 2.0"},
+      {"id": "hdmi-out", "label": "HDMI Out", "type": "output", "spec": "HDMI 2.0"},
+      {"id": "audio-embed", "label": "Audio Embed", "type": "input", "spec": "AES/Analog"},
+      {"id": "audio-deembed-sdi", "label": "Audio De-embed SDI", "type": "output", "spec": "AES/Analog"},
+      {"id": "audio-deembed-hdmi", "label": "Audio De-embed HDMI", "type": "output", "spec": "HDMI"},
+      {"id": "usb-control", "label": "USB Control/LUT", "type": "control", "spec": "USB 2.0"},
+      {"id": "power-5v", "label": "5V DC Power", "type": "input", "spec": "Power"},
+      {"id": "ref-in", "label": "Ref In", "type": "input", "spec": "Tri-Level/BB"}
+    ]
+  }
+}, '*');
+
+window.postMessage({
+  type: 'add-node',
+  payload: {
+  "id": "constellation-2me-20260206-230150",
+  "type": "switcher",
+  "device_type": "Switcher",
+  "manufacturer": "Blackmagic Design",
+  "model": "ATEM Constellation 2 M/E",
+  "color": "#0a1f44",
+  "position": {
+    "x": 400,
+    "y": 200
+  },
+  "pins": [
+    {
+      "id": "sdi-in-1",
+      "label": "SDI In 1",
+      "type": "input",
+      "spec": "12G-SDI"
+    },
+    {
+      "id": "sdi-in-2",
+      "label": "SDI In 2",
+      "type": "input",
+      "spec": "12G-SDI"
+    },
+    {
+      "id": "sdi-aux-out-1",
+      "label": "SDI Aux Out 1",
+      "type": "output",
+      "spec": "12G-SDI"
+    },
+    {
+      "id": "sdi-aux-out-2",
+      "label": "SDI Aux Out 2",
+      "type": "output",
+      "spec": "12G-SDI"
+    },
+    {
+      "id": "ethernet-ctrl-1",
+      "label": "Control Ethernet 1",
+      "type": "control",
+      "spec": "1GBASE-T"
+    },
+    {
+      "id": "ethernet-ctrl-2",
+      "label": "Control Ethernet 2",
+      "type": "control",
+      "spec": "1GBASE-T"
+    },
+    {
+      "id": "ref-in",
+      "label": "Reference Input",
+      "type": "input",
+      "spec": "Tri-Level / Black Burst"
+    }
+  ],
+  "notes": "2 M/E live production switcher with 40\u00d712 crosspoint, 4 DVEs, 8 ATEM Advanced Keyers, 2 multiviewers",
+  "thumbnail": null
+}
+}, '*');

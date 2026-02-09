@@ -42,7 +42,7 @@
                         <strong>{{ dt.name }}</strong>
                     </div>
                     <form method="post" style="margin: 0;">
-                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="action" value="device_type_delete">
                         <input type="hidden" name="device_id" value="{{ dt.id }}">
                         <button type="submit" class="delete-btn" onclick="return confirm('Delete {{ dt.name }}? This cannot be undone.')">Delete</button>
                     </form>
@@ -55,7 +55,7 @@
 
     <h2>Add New Device Type</h2>
     <form method="post">
-        <input type="hidden" name="action" value="add">
+        <input type="hidden" name="action" value="device_type_add">
         <label for="name">Name (required, unique):</label>
         <input type="text" id="name" name="name" required>
 
@@ -63,6 +63,37 @@
         <input type="text" id="color" name="color" value="#3366FF" pattern="#[0-9A-Fa-f]{6}">
 
         <input type="submit" value="Add Device Type">
+    </form>
+    <h2>Master Manufacturers ({{ manufacturers|length }})</h2>
+    {% if manufacturers %}
+        <ul class="list">
+            {% for manufacturer in manufacturers %}
+                <li>
+                    <div>
+                        
+                        <strong>{{ manufacturer.name }}</strong>
+                    </div>
+                    <form method="post" style="margin: 0;">
+                        <input type="hidden" name="action" value="manufacturer_delete">
+                        <input type="hidden" name="manufacturer_id" value="{{ manufacturer.id }}">
+                        <button type="submit" class="delete-btn" onclick="return confirm('Delete {{ manufacturer.name }}? This cannot be undone.')">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No manufacturers defined yet.</p>
+    {% endif %}
+
+    <h2>Add New Manufacterer</h2>
+    <form method="post">
+        <input type="hidden" name="action" value="manufacturer_add">
+        <label for="name">Name (required, unique):</label>
+        <input type="text" id="mname" name="mname" required>
+
+        
+
+        <input type="submit" value="Add Manufacterer">
     </form>
 
     <p class="logout"><a href="{{ url_for('auth.logout') }}">Logout</a></p>

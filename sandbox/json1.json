@@ -1,0 +1,61 @@
+window.postMessage({
+  type: 'add-node',
+  payload: {
+  "id": "constellation-2me-20260206-230150",
+  "type": "switcher",
+  "device_type": "Switcher",
+  "manufacturer": "Blackmagic Design",
+  "model": "ATEM Constellation 2 M/E",
+  "color": "#0a1f44",
+  "position": {
+    "x": 400,
+    "y": 200
+  },
+  "pins": [
+    {
+      "id": "sdi-in-1",
+      "label": "SDI In 1",
+      "type": "input",
+      "spec": "12G-SDI"
+    },
+    {
+      "id": "sdi-in-2",
+      "label": "SDI In 2",
+      "type": "input",
+      "spec": "12G-SDI"
+    },
+    {
+      "id": "sdi-aux-out-1",
+      "label": "SDI Aux Out 1",
+      "type": "output",
+      "spec": "12G-SDI"
+    },
+    {
+      "id": "sdi-aux-out-2",
+      "label": "SDI Aux Out 2",
+      "type": "output",
+      "spec": "12G-SDI"
+    },
+    {
+      "id": "ethernet-ctrl-1",
+      "label": "Control Ethernet 1",
+      "type": "control",
+      "spec": "1GBASE-T"
+    },
+    {
+      "id": "ethernet-ctrl-2",
+      "label": "Control Ethernet 2",
+      "type": "control",
+      "spec": "1GBASE-T"
+    },
+    {
+      "id": "ref-in",
+      "label": "Reference Input",
+      "type": "input",
+      "spec": "Tri-Level / Black Burst"
+    }
+  ],
+  "notes": "2 M/E live production switcher with 40\u00d712 crosspoint, 4 DVEs, 8 ATEM Advanced Keyers, 2 multiviewers",
+  "thumbnail": null
+}
+}, '*');

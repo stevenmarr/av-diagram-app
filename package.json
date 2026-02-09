@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@radix-ui/react-context-menu": "^2.2.16",
+    "rc-menu": "^9.16.1"
+  }
+}
