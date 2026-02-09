@@ -14,109 +14,100 @@ import '@xyflow/react/dist/style.css';
 
 import CustomNode from './components/CustomNode';
 
-const nodeTypes = {
-  custom: CustomNode,
-};
+const nodeTypes = { custom: CustomNode };
 
-function AppContent() {
+function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  // Context menu state
-  const [menu, setMenu] = useState(null); // { x, y, nodeId, nodeData }
+  const [nodeMenu, setNodeMenu] = useState(null);   // right-click on node
+  const [canvasMenu, setCanvasMenu] = useState(null); // right-click on empty space
 
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
+  const closeMenus = () => {
+    setNodeMenu(null);
+    setCanvasMenu(null);
+  };
 
-  const isValidConnection = useCallback(
-    (connection) => {
-      const { source, sourceHandle, target, targetHandle } = connection;
-      if (source === target) return false;
+  const onConnect = (params) => setEdges((eds) => addEdge(params, eds));
 
-      const sourceNode = nodes.find((n) => n.id === source);
-      const targetNode = nodes.find((n) => n.id === target);
-      if (!sourceNode || !targetNode) return false;
+  const isValidConnection = (connection) => {
+    const { source, sourceHandle, target, targetHandle } = connection;
+    if (source === target) return false;
 
-      const sourcePin = sourceNode.data.pins?.find((p) => p.id === sourceHandle);
-      const targetPin = targetNode.data.pins?.find((p) => p.id === targetHandle);
-      if (!sourcePin || !targetPin) return false;
+    const sourceNode = nodes.find(n => n.id === source);
+    const targetNode = nodes.find(n => n.id === target);
+    if (!sourceNode || !targetNode) return false;
 
-      if (sourcePin.type !== 'output' || targetPin.type !== 'input') return false;
-      if (sourcePin.spec !== targetPin.spec) return false;
+    const sourcePin = sourceNode.data.pins?.find(p => p.id === sourceHandle);
+    const targetPin = targetNode.data.pins?.find(p => p.id === targetHandle);
+    if (!sourcePin || !targetPin) return false;
 
-      const fromSource = edges.filter(
-        (e) => e.source === source && e.sourceHandle === sourceHandle
-      );
-      const toTarget = edges.filter(
-        (e) => e.target === target && e.targetHandle === targetHandle
-      );
+    if (sourcePin.type !== 'output' || targetPin.type !== 'input') return false;
+    if (sourcePin.spec !== targetPin.spec) return false;
 
-      return fromSource.length === 0 && toTarget.length === 0;
-    },
-    [nodes, edges]
-  );
+    const fromSource = edges.filter(e => e.source === source && e.sourceHandle === sourceHandle);
+    const toTarget = edges.filter(e => e.target === target && e.targetHandle === targetHandle);
 
-  // Right-click on node → show menu
+    return fromSource.length === 0 && toTarget.length === 0;
+  };
+
+  // Right-click on NODE
   const onNodeContextMenu = (event, node) => {
     event.preventDefault();
-    setMenu({
-      x: event.clientX,
-      y: event.clientY,
-      nodeId: node.id,
-      nodeData: node.data,
-    });
+    console.log('Node right-click →', node.id);
+    setNodeMenu({ x: event.clientX, y: event.clientY, nodeId: node.id, nodeData: node.data });
+    setCanvasMenu(null);
   };
 
-  // Close menu when clicking elsewhere
-  const closeMenu = () => setMenu(null);
-
-  // Menu actions
-  const handleDelete = () => {
-    if (!menu) return;
-    setNodes((nds) => nds.filter((n) => n.id !== menu.nodeId));
-    setEdges((eds) =>
-      eds.filter((e) => e.source !== menu.nodeId && e.target !== menu.nodeId)
-    );
-    closeMenu();
+  // Right-click on EMPTY CANVAS
+  const onPaneContextMenu = (event) => {
+    event.preventDefault();
+    console.log('Canvas right-click');
+    setCanvasMenu({ x: event.clientX, y: event.clientY });
+    setNodeMenu(null);
   };
 
-  const handleEditLabel = () => {
-    if (!menu) return;
-    const newLabel = prompt('New label:', menu.nodeData.label || '');
-    if (newLabel) {
-      setNodes((nds) =>
-        nds.map((n) =>
-          n.id === menu.nodeId
-            ? { ...n, data: { ...n.data, label: newLabel } }
-            : n
-        )
-      );
+  // Node menu actions
+  const handleNodeAction = (action) => {
+    if (!nodeMenu) return;
+    const { nodeId, nodeData } = nodeMenu;
+
+    if (action === 'edit-label') {
+      const newLabel = prompt('New label:', nodeData.label || '');
+      if (newLabel) {
+        setNodes(nds => nds.map(n => n.id === nodeId ? { ...n, data: { ...n.data, label: newLabel } } : n));
+      }
     }
-    closeMenu();
+    if (action === 'delete') {
+      setNodes(nds => nds.filter(n => n.id !== nodeId));
+      setEdges(eds => eds.filter(e => e.source !== nodeId && e.target !== nodeId));
+    }
+    if (action === 'info') {
+      alert(`Node Info:\nID: ${nodeId}\nLabel: ${nodeData.label || '—'}\nPins: ${nodeData.pins?.length || 0}`);
+    }
+    closeMenus();
   };
 
-  const handleInfo = () => {
-    if (!menu) return;
-    alert(
-      `Node Info:\n` +
-        `ID: ${menu.nodeId}\n` +
-        `Label: ${menu.nodeData.label || '—'}\n` +
-        `Pins: ${menu.nodeData.pins?.length || 0}`
-    );
-    closeMenu();
+  // Canvas menu actions (blank for now)
+  const handleCanvasAction = (action) => {
+    if (action === 'add-device') alert('Add new device coming soon...');
+    if (action === 'save-graph') alert('Save graph coming soon...');
+    if (action === 'clear-canvas') {
+      if (window.confirm('Clear entire canvas?')) {
+        setNodes([]);
+        setEdges([]);
+      }
+    }
+    closeMenus();
   };
 
-  // Listen for nodes from Python/console
+  // Listen for nodes from Python
   useEffect(() => {
     const handleMessage = (event) => {
       if (event.data?.type === 'add-node') {
-        const payloads = Array.isArray(event.data.payload)
-          ? event.data.payload
-          : [event.data.payload];
+        const payloads = Array.isArray(event.data.payload) ? event.data.payload : [event.data.payload];
 
-        const newNodes = payloads.map((p) => ({
+        const newNodes = payloads.map(p => ({
           id: p.id || `node-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           type: 'custom',
           position: p.position || { x: Math.random() * 600 + 100, y: Math.random() * 400 + 100 },
@@ -131,7 +122,7 @@ function AppContent() {
           draggable: true,
         }));
 
-        setNodes((prev) => [...prev, ...newNodes]);
+        setNodes(prev => [...prev, ...newNodes]);
       }
     };
 
@@ -140,7 +131,7 @@ function AppContent() {
   }, [setNodes]);
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }} onClick={closeMenu}>
+    <div style={{ width: '100vw', height: '100vh', position: 'relative' }} onClick={closeMenus}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -150,6 +141,7 @@ function AppContent() {
         isValidConnection={isValidConnection}
         nodeTypes={nodeTypes}
         onNodeContextMenu={onNodeContextMenu}
+        onPaneContextMenu={onPaneContextMenu}
         fitView
         minZoom={0.1}
         maxZoom={4}
@@ -159,56 +151,59 @@ function AppContent() {
         <Background variant="dots" gap={12} size={1} />
       </ReactFlow>
 
-      {/* Simple context menu */}
-      {menu && (
+      {/* NODE MENU - bright yellow, impossible to miss */}
+      {nodeMenu && (
         <div
           style={{
             position: 'fixed',
-            left: menu.x,
-            top: menu.y,
-            background: '#1e2937',
-            color: 'white',
-            border: '1px solid #475569',
-            borderRadius: '6px',
-            padding: '6px 0',
-            minWidth: '160px',
-            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.3)',
-            zIndex: 1000,
+            left: `${nodeMenu.x}px`,
+            top: `${nodeMenu.y}px`,
+            zIndex: 99999,
+            background: '#ffeb3b',
+            border: '4px solid red',
+            borderRadius: '8px',
+            padding: '12px',
+            boxShadow: '0 0 30px rgba(0,0,0,0.6)',
+            minWidth: '200px',
+            color: '#000',
+            fontWeight: 'bold',
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div
-            onClick={handleEditLabel}
-            style={{ padding: '8px 16px', cursor: 'pointer' }}
-            className="hover:bg-slate-700"
-          >
-            Edit Label
-          </div>
-          <div
-            onClick={handleInfo}
-            style={{ padding: '8px 16px', cursor: 'pointer' }}
-            className="hover:bg-slate-700"
-          >
-            Node Info
-          </div>
-          <div
-            onClick={handleDelete}
-            style={{ padding: '8px 16px', cursor: 'pointer', color: '#ef4444' }}
-            className="hover:bg-slate-700"
-          >
-            Delete Node
-          </div>
+          <strong>Node Menu</strong><br /><br />
+          <div onClick={() => handleNodeAction('edit-label')} style={{ padding: '8px', cursor: 'pointer' }}>Edit Label</div>
+          <div onClick={() => handleNodeAction('info')} style={{ padding: '8px', cursor: 'pointer' }}>Node Info</div>
+          <div onClick={() => handleNodeAction('delete')} style={{ padding: '8px', cursor: 'pointer', color: 'red' }}>Delete Node</div>
+        </div>
+      )}
+
+      {/* CANVAS MENU - bright green */}
+      {canvasMenu && (
+        <div
+          style={{
+            position: 'fixed',
+            left: `${canvasMenu.x}px`,
+            top: `${canvasMenu.y}px`,
+            zIndex: 99999,
+            background: '#4caf50',
+            border: '4px solid blue',
+            borderRadius: '8px',
+            padding: '12px',
+            boxShadow: '0 0 30px rgba(0,0,0,0.6)',
+            minWidth: '220px',
+            color: '#000',
+            fontWeight: 'bold',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <strong>Canvas Menu</strong><br /><br />
+          <div onClick={() => handleCanvasAction('add-device')} style={{ padding: '8px', cursor: 'pointer' }}>Add New Device…</div>
+          <div onClick={() => handleCanvasAction('save-graph')} style={{ padding: '8px', cursor: 'pointer' }}>Save Graph / Export</div>
+          <div onClick={() => handleCanvasAction('clear-canvas')} style={{ padding: '8px', cursor: 'pointer', color: 'red' }}>Clear Canvas</div>
         </div>
       )}
     </div>
   );
 }
 
-// Wrap with provider (required for React Flow v12+)
-export default function App() {
-  return (
-    <ReactFlowProvider>
-      <AppContent />
-    </ReactFlowProvider>
-  );
-}
+export default App;
