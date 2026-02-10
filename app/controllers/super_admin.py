@@ -9,7 +9,7 @@ from app.decorators.role import requires_super_admin  # Correct import
 
 super_admin_bp = Blueprint('super_admin', __name__, url_prefix='/super_admin')
 
-@super_admin_bp.route('/', methods=['GET', 'POST'])
+@super_admin_bp.route('/super_admin/', methods=['GET', 'POST'])
 @login_required
 @requires_super_admin
 def dashboard():
