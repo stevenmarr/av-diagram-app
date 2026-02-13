@@ -17,7 +17,9 @@ export default function CustomNode({ data }) {
     pins = [],
     notes = '',
     manufacturer = '',
-    model = ''
+    model = '',
+    id = '',
+    type = ''
   } = data || {};
 
   // Split pins by type
@@ -45,14 +47,14 @@ export default function CustomNode({ data }) {
         flexDirection: 'column',
         justifyContent: 'flex-start'
       }}
-      title={notes || undefined}
+      title={type}
     >
       {/* Node label + manufacturer/model */}
       <div style={{ fontWeight: 'bold', marginBottom: '16px', fontSize: '14px' }}>
-        {label}
+        'node' {type} {manufacturer} {model} {id}
         <br />
         <small style={{ opacity: 0.8 }}>
-          {manufacturer} {model}
+          {id}
         </small>
       </div>
 
@@ -65,7 +67,7 @@ export default function CustomNode({ data }) {
             style={{
               position: 'absolute',
               left: 0,
-              top: 50 + index * 32,
+              top:  index * 32,
               display: 'flex',
               alignItems: 'center',
               width: '100%'
@@ -102,7 +104,7 @@ export default function CustomNode({ data }) {
             style={{
               position: 'absolute',
               right: 0,
-              top: 50 + index * 32,
+              top: index * 32,
               display: 'flex',
               alignItems: 'center',
               width: '100%',
